@@ -8,7 +8,10 @@ export class AuthGuard implements CanActivate {
     ): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         if (!request.headers.authorization) {
-            return false
+            throw new HttpException(
+                'Un authorized',
+                HttpStatus.UNAUTHORIZED
+            )
         }
 
         request.user =  await this.validateToken(request.headers.authorization)
@@ -31,7 +34,7 @@ export class AuthGuard implements CanActivate {
             const message = 'TokenError: ' + (err.message || err.name)
             throw new HttpException(
                 message,
-                HttpStatus.FORBIDDEN
+                HttpStatus.UNAUTHORIZED
             )
         }
     }

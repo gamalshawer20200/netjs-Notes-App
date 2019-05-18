@@ -13,11 +13,11 @@ export class UserController {
     @Get()
     @UseGuards(new AuthGuard())
     showAllUsers(@User('username') user){
-        console.log(user)
+        console.log('UserName:',user)
        return this.userService.showAll()
     }
 
-    @Post('login')
+    @Post('login') 
     @UsePipes(new ValidationPipe())
     login(@Body() data:UserDTO){
         return this.userService.login(data)
@@ -28,4 +28,7 @@ export class UserController {
     register(@Body() data:UserDTO){
         return this.userService.register(data)
     }
+
+    
+    
 }
