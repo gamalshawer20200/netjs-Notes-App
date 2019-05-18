@@ -20,7 +20,7 @@ export class UserEntity {
     @Column('text')
     password: string
 
-    @OneToMany(type => NoteEntity , note => note.user)
+    @OneToMany(type => NoteEntity, note => note.user)
     notes: NoteEntity[]
 
 
@@ -32,16 +32,19 @@ export class UserEntity {
     toResponseObject(showToken: boolean) {
         console.log(showToken)
         const { id, created, username, token } = this
-        const responseObject = { id, created, username, token : 'notVisible'}
+        const responseObject: any = { id, created, username, token: 'notVisible' }
         if (showToken) {
             responseObject.token = token
+        }
+        if (this.notes) {
+            responseObject.notes = this.notes
         }
         return responseObject
     }
 
     async comparePassword(attempt: string) {
         let c = await bcrypt.compare(attempt, this.password)
-        console.log('Res **** => ',c)
+        console.log('Res **** => ', c)
         return c
     }
 
