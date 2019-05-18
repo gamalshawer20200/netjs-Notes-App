@@ -8,9 +8,9 @@ export class NoteEntity {
 
     @Column('text') text: string;
 
-    @Column() photo: string;
+    @Column({nullable:true}) photo: string;
 
     @Column('text') private: boolean;
 
-    @Column() ratenumber: number;
+    @Column({nullable:true}) ratenumber: number;
 }
