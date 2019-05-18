@@ -22,7 +22,7 @@ export class NoteService {
     }
 
     async read(id: string) {
-        return await this.noteRepository.findOne({ where: [id] })
+        return await this.noteRepository.findOne({ where: {id} })
     }
 
     async update(id: string, data: Partial<NoteDTO>) {
