@@ -3,7 +3,7 @@ import { NoteService } from './note.service';
 import { NoteDTO } from './note.dto';
 import { ValidationPipe } from 'src/common/validation.pipe';
 
-@Controller('note')
+@Controller('api/notes')
 export class NoteController {
     constructor(private noteService: NoteService) { }
 
