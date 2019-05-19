@@ -6,7 +6,6 @@ import { NoteDTO } from './note.dto';
 import { NoteEntity } from './note.entity';
 import { UserEntity } from 'src/user/user.entity';
 import { User } from 'src/user/user.decorator';
-import { userInfo } from 'os';
 
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert, OneToMany, ManyToMany, ManyToOne, JoinTable, RelationCount } from "typeorm";
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import { NoteEntity } from "src/note/note.entity";
@@ -23,6 +23,19 @@ export class UserEntity {
     @OneToMany(type => NoteEntity, note => note.user)
     notes: NoteEntity[]
 
+    @ManyToMany(() => UserEntity, currentUser => currentUser.following)
+    @JoinTable()
+    followers: UserEntity[];
+
+    @ManyToMany(() => UserEntity, currentUser => currentUser.followers)
+    following: UserEntity[];
+
+    // @RelationCount((currentUser: UserEntity) => currentUser.followers)
+    // public followersCount: number;
+
+    // @RelationCount((currentUser: UserEntity) => currentUser.following)
+    // public followingCount: number;
+
 
     @BeforeInsert()
     async hashPassword() {
@@ -31,13 +44,16 @@ export class UserEntity {
 
     toResponseObject(showToken: boolean) {
         console.log(showToken)
-        const { id, created, username, token } = this
-        const responseObject: any = { id, created, username, token: 'notVisible' }
+        const { id, created, username, token, followers } = this
+        const responseObject: any = { id, created, username, token: null, followers }
         if (showToken) {
             responseObject.token = token
         }
         if (this.notes) {
             responseObject.notes = this.notes
+        }
+        if (this.followers) {
+            responseObject.followers = this.followers
         }
         return responseObject
     }
