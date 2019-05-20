@@ -20,6 +20,11 @@ export class UserEntity {
     @Column('text')
     password: string
 
+    @Column({ nullable: true })
+    followingCount: number
+    @Column({ nullable: true })
+    followersCount: number
+
     @OneToMany(type => NoteEntity, note => note.user)
     notes: NoteEntity[]
 
@@ -34,7 +39,7 @@ export class UserEntity {
     // public followersCount: number;
 
     // @RelationCount((currentUser: UserEntity) => currentUser.following)
-    // public followingCount: number;
+    // followingCount: number;
 
 
     @BeforeInsert()
@@ -43,17 +48,30 @@ export class UserEntity {
     }
 
     toResponseObject(showToken: boolean) {
-        console.log(showToken)
-        const { id, created, username, token, followers } = this
-        const responseObject: any = { id, created, username, token: null, followers }
+        const { id, created, username, token, following, followers,followersCount, followingCount } = this
+        const responseObject: any = { username, followersCount, followingCount,followers,following }
         if (showToken) {
             responseObject.token = token
+            responseObject.created = created
+            responseObject.id = id
         }
         if (this.notes) {
             responseObject.notes = this.notes
         }
+        
         if (this.followers) {
-            responseObject.followers = this.followers
+            responseObject.followers= this.followers
+        }
+        if (this.following) {
+            responseObject.following = this.following
+        }
+        
+
+        if (this.followersCount) {
+            responseObject.followingCount = this.followingCount
+        }
+        if (this.followersCount) {
+            responseObject.followerscount = this.followersCount
         }
         return responseObject
     }

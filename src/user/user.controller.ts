@@ -32,8 +32,6 @@ export class UserController {
     @Post('follow')
     @UseGuards(new AuthGuard())
     follow(@User('id') id: string, @Body() username: string) {
-        // console.log('username' ,username['username'])
-        // console.log("usertoken",id)
         return this.userService.follow(id, username['username'])
     }
 

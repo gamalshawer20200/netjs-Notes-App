@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 // import * as
 
 import { UserEntity } from './user.entity';
-import { UserDTO } from './user.dto';
+import { UserDTO, UserRo } from './user.dto';
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,7 @@ export class UserService {
 
     async showAll() {
         const users = await this.userRepository.find({ relations: ['notes'] })
-        return users.map(user => user.toResponseObject(false))
+        return users.map(user => user.toResponseObject(true))
     }
 
     async login(data: UserDTO) {
@@ -47,19 +47,32 @@ export class UserService {
             )
         }
         console.log('****************************** continue')
+        data.followingCount = 0
+        data.followersCount = 0
         user = await this.userRepository.create(data)
         await this.userRepository.save(user)
         return user.toResponseObject(true)
 
     }
 
-    async follow(id: string, username: string) {
-        const user = await this.userRepository.findOne({ where: { id } })
-        const user2 = await this.userRepository.findOne({ where: { username } })
-        let upData = { ...user2, followers: [user] }
-        let connect = this.userRepository.merge(user2, { followers: [upData.followers[0]] })
-        await this.userRepository.save(connect)
-        return connect
+    async follow(id: string, username: string): Promise<UserRo> {
+        let user = await this.userRepository.findOne({ where: { id } })
+        let user2 = await this.userRepository.findOne({ where: { username } })
+        // console.log('user' ,user)
+        // console.log('user2',user2)
+        // let upData = { ...user2, followers: [user] }
+        // let connect = this.userRepository.merge(user2, { followers: [upData.followers[0]] })
+        // await this.userRepository.save(connect)
+
+        user.following = []
+        user2.password = undefined
+        user.following.push(user2)
+        user.followingCount++
+        user2.followersCount++
+        await this.userRepository.save(user)
+        await this.userRepository.save(user2)
+
+        return user.toResponseObject(false)
     }
 
     async showFollowing(id: string) {
@@ -73,7 +86,13 @@ export class UserService {
 
     async showFollowers(id: string) {
         const followers = await this.userRepository.find({ relations: ['followers'] })
-        return followers.map(follower => (follower.id === id) ? follower.toResponseObject(false) : null)
+        console.log(id)
+
+        return followers.map(follower => {
+            console.log(follower.id)
+            if (follower.id === id) { return follower.toResponseObject(false) }
+            else { null }
+        })
     }
 }
 
