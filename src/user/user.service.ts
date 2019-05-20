@@ -67,8 +67,11 @@ export class UserService {
         user.following = []
         user2.password = undefined
         user.following.push(user2)
-        user.followingCount++
-        user2.followersCount++
+
+        if (user.following.filter((user) => user.id === user2.id).length < 1) {
+            user.followingCount++
+            user2.followersCount++
+        }
         await this.userRepository.save(user)
         await this.userRepository.save(user2)
 

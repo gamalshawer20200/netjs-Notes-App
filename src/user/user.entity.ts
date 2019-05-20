@@ -48,24 +48,23 @@ export class UserEntity {
     }
 
     toResponseObject(showToken: boolean) {
-        const { id, created, username, token, following, followers,followersCount, followingCount } = this
-        const responseObject: any = { username, followersCount, followingCount,followers,following }
+        const { id, created, username, token, following, followers, followersCount, followingCount } = this
+        const responseObject: any = { created, username, followersCount, followingCount, followers, following }
         if (showToken) {
             responseObject.token = token
-            responseObject.created = created
             responseObject.id = id
         }
         if (this.notes) {
             responseObject.notes = this.notes
         }
-        
+
         if (this.followers) {
-            responseObject.followers= this.followers
+            responseObject.followers = this.followers
         }
         if (this.following) {
             responseObject.following = this.following
         }
-        
+
 
         if (this.followersCount) {
             responseObject.followingCount = this.followingCount
