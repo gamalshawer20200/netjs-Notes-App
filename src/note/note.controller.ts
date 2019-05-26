@@ -4,13 +4,14 @@ import { NoteDTO } from './note.dto';
 import { ValidationPipe } from 'src/common/validation.pipe';
 import { AuthGuard } from 'src/common/auth.gaurd';
 import { User } from 'src/user/user.decorator';
+import { userInfo } from 'os';
 
 @Controller('api/notes')
 export class NoteController {
     constructor(private noteService: NoteService) { }
 
     @Get()
-    ShowAll(){
+    ShowAll() {
         return this.noteService.global()
     }
 
@@ -47,4 +48,30 @@ export class NoteController {
         console.log(user, id)
         return this.noteService.destroy(id, user)
     }
+
+    @Post('bookmark/:id')
+    @UseGuards(new AuthGuard())
+    addBookmark(@User('id') userId, @Param('id') noteId) {
+        return this.noteService.bookmarkNote(userId, noteId)
+    }
+
+    @Delete('bookmark/:id')
+    @UseGuards(new AuthGuard())
+    DeleteBookmark(@User('id') userId, @Param('id') noteId) {
+        return this.noteService.unbookmarkNote(userId, noteId)
+    }
+
+    @Post('upvote/:id')
+    @UseGuards(new AuthGuard())
+    upvoteNote(@Param('id') noteId: string, @User('id') userId: string) {
+        return this.noteService.upvote(noteId,userId)
+    }
+
+    @Post('downvote/:id')
+    @UseGuards(new AuthGuard())
+    downvoteNote(@Param('id') noteId: string, @User('id') userId: string) {
+        return this.noteService.downvote(noteId,userId)
+    }
+
+
 }

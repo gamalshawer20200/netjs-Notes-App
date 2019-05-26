@@ -35,6 +35,10 @@ export class UserEntity {
     @ManyToMany(() => UserEntity, currentUser => currentUser.followers)
     following: UserEntity[];
 
+    @ManyToMany(type => NoteEntity, { cascade: true })
+    @JoinTable()
+    bookmarks: NoteEntity[]
+
     // @RelationCount((currentUser: UserEntity) => currentUser.followers)
     // public followersCount: number;
 
@@ -48,7 +52,7 @@ export class UserEntity {
     }
 
     toResponseObject(showToken: boolean) {
-        const { id, created, username, token, following, followers, followersCount, followingCount } = this
+        const { id, created, username, token, following, followers, followersCount, followingCount, bookmarks } = this
         const responseObject: any = { created, username, followersCount, followingCount, followers, following }
         if (showToken) {
             responseObject.token = token
@@ -65,12 +69,14 @@ export class UserEntity {
             responseObject.following = this.following
         }
 
-
         if (this.followersCount) {
             responseObject.followingCount = this.followingCount
         }
         if (this.followersCount) {
             responseObject.followerscount = this.followersCount
+        }
+        if (this.bookmarks) {
+            responseObject.bookmarks = this.bookmarks
         }
         return responseObject
     }

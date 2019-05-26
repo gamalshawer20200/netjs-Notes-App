@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsInt } from "class-validator";
+import { NoteEntity } from "src/note/note.entity";
 
 export class UserDTO {
 
@@ -22,4 +23,5 @@ export class UserRo {
     username: string
     followingCount: number
     followersCount: number
+    bookmarks?: NoteEntity[]
 }
