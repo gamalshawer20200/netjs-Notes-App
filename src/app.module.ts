@@ -6,11 +6,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NoteModule } from './note/note.module';
 import { UserModule } from './user/user.module';
+import { CommentsModule } from './comments/comments.module';
 
 
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), NoteModule, UserModule],
+  imports: [TypeOrmModule.forRoot(), NoteModule, UserModule, CommentsModule],
   controllers: [AppController],
   providers: [AppService,{
     provide: APP_FILTER,

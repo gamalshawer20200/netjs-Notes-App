@@ -52,12 +52,12 @@ export class NoteService {
     }
 
     async global() {
-        const notes = await this.noteRepository.find({ relations: ['user', 'upvotes', 'downvotes'] })
+        const notes = await this.noteRepository.find({ relations: ['user', 'upvotes', 'downvotes', 'comments'] })
         return notes.map(note => this.toResponseObject(note))
     }
 
     async showAll(id: string) {
-        const notes = await this.noteRepository.find({ relations: ['user', 'upvotes', 'downvotes'] })
+        const notes = await this.noteRepository.find({ relations: ['user', 'upvotes', 'downvotes', 'comments'] })
         return notes.map(note => {
             if (note.user.id == id) { return this.toResponseObject(note) }
         })
@@ -71,7 +71,7 @@ export class NoteService {
     }
 
     async read(id: string) {
-        const note = await this.noteRepository.findOne({ where: { id }, relations: ['user', 'upvotes', 'downvotes'] })
+        const note = await this.noteRepository.findOne({ where: { id }, relations: ['user', 'upvotes', 'downvotes', 'comments'] })
         if (!note) {
             throw new HttpException('Not Found', HttpStatus.NOT_FOUND)
         }
@@ -85,11 +85,11 @@ export class NoteService {
         }
         this.ensureOwnership(note, userId)
         await this.noteRepository.update({ id }, data)
-        return await this.noteRepository.findOne({ id })
+        return await this.noteRepository.findOne({ where: { id }, relations: ['user', 'comments'] })
     }
 
     async destroy(id: string, userId: string) {
-        const note = await this.noteRepository.findOne({ where: { id }, relations: ['user'] })
+        const note = await this.noteRepository.findOne({ where: { id }, relations: ['user','comments'] })
         if (!note) {
             throw new HttpException('Not Found', HttpStatus.NOT_FOUND)
         }
@@ -130,7 +130,7 @@ export class NoteService {
     }
 
     async upvote(noteId: string, userId: string) {
-        let note = await this.noteRepository.findOne({ where: { id: noteId }, relations: ['user', 'upvotes', 'downvotes'] })
+        let note = await this.noteRepository.findOne({ where: { id: noteId }, relations: ['user', 'upvotes', 'downvotes','comments'] })
         const user = await this.userRepository.findOne({ where: { id: userId } })
 
         note = await this.vote(note, user, Votes.UP)
@@ -138,7 +138,7 @@ export class NoteService {
     }
 
     async downvote(noteId: string, userId: string) {
-        let note = await this.noteRepository.findOne({ where: { id: noteId }, relations: ['user', 'upvotes', 'downvotes'] })
+        let note = await this.noteRepository.findOne({ where: { id: noteId }, relations: ['user', 'upvotes', 'downvotes','comments'] })
         const user = await this.userRepository.findOne({ where: { id: userId } })
 
         note = await this.vote(note, user, Votes.DOWN)
